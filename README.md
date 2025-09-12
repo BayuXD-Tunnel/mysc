@@ -6,9 +6,9 @@
 
 
 
-### TESTED ON OS 
-- UBUNTU 20.04.05
-- DEBIAN 10
+### SUPPORT ON OS
+- UBUNTU 20, 22, 24
+- DEBIAN 10, 11, 12
 
 ### FITUR TAMBAHAN
 - Tambah Swap 1GiB
