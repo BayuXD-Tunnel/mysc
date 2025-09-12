@@ -5,7 +5,7 @@ apt update -y
 apt install -y
 apt install lolcat -y
 apt install wondershaper -y
-apt install wget -y
+apt install wget curl -y
 Green="\e[92;1m"
 RED="\033[31m"
 YELLOW="\033[33m"
@@ -254,33 +254,42 @@ function nginx_install() {
 # Update and remove packages
 function base_package() {
     clear
-    ########
-    print_install "Menginstall Packet Yang Dibutuhkan"
-    apt install zip pwgen openssl netcat socat cron bash-completion -y
-    apt install figlet -y
-    apt update -y
-    apt upgrade -y
-    apt dist-upgrade -y
-    systemctl enable chronyd
-    systemctl restart chronyd
-    systemctl enable chrony
-    systemctl restart chrony
-    chronyc sourcestats -v
-    chronyc tracking -v
-    apt install ntpdate -y
-    ntpdate pool.ntp.org
-    apt install sudo -y
-    sudo apt-get clean all
-    sudo apt-get autoremove -y
-    sudo apt-get install -y debconf-utils
-    sudo apt-get remove --purge exim4 -y
-    sudo apt-get remove --purge ufw firewalld -y
-    sudo apt-get install -y --no-install-recommends software-properties-common
-    echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
-    echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
-    sudo apt-get install -y speedtest-cli vnstat libnss3-dev libnspr4-dev pkg-config libpam0g-dev libcap-ng-dev libcap-ng-utils libselinux1-dev libcurl4-nss-dev flex bison make libnss3-tools libevent-dev bc rsyslog dos2unix zlib1g-dev libssl-dev libsqlite3-dev sed dirmngr libxml-parser-perl build-essential gcc g++ python htop lsof tar wget curl ruby zip unzip p7zip-full python3-pip libc6 util-linux build-essential msmtp-mta ca-certificates bsd-mailx iptables iptables-persistent netfilter-persistent net-tools openssl ca-certificates gnupg gnupg2 ca-certificates lsb-release gcc shc make cmake git screen socat xz-utils apt-transport-https gnupg1 dnsutils cron bash-completion ntpdate chrony jq openvpn easy-rsa
-    print_success "Packet Yang Dibutuhkan"
-    
+print_install "Menginstall Packet Yang Dibutuhkan"
+
+apt update -y
+apt install sudo -y
+sudo apt-get clean all
+apt install -y debconf-utils
+apt install p7zip-full at -y
+apt-get remove --purge ufw firewalld -y
+apt-get remove --purge exim4 -y
+apt-get autoremove -y
+apt install -y --no-install-recommends software-properties-common
+apt install zip pwgen openssl netcat socat cron bash-completion -y
+echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
+echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
+sudo DEBIAN_FRONTEND=noninteractive apt-get -y install nginx iptables iptables-persistent netfilter-persistent libxml-parser-perl squid screen curl jq bzip2 gzip coreutils zip unzip rsyslog net-tools sed bc apt-transport-https build-essential dirmngr libxml-parser-perl lsof openvpn easy-rsa fail2ban tmux squid dropbear socat cron bash-completion ntpdate xz-utils apt-transport-https chrony pkg-config bison make git speedtest-cli p7zip-full zlib1g-dev python-is-python3 python3-pip build-essential squid libcurl4-openssl-dev bsdmainutils figlet
+sudo apt-get autoclean -y >/dev/null 2>&1
+audo apt-get -y --purge removd unscd >/dev/null 2>&1
+sudo apt-get -y --purge remove samba* >/dev/null 2>&1
+sudo apt-get -y --purge remove bind9* >/dev/null 2>&1
+sudo apt-get -y remove sendmail* >/dev/null 2>&1
+apt autoremove -y >/dev/null 2>&1
+
+source /etc/os-release
+OS="$ID $VERSION_ID"
+if [[ "$OS" == "debian 12" || "$OS" == "ubuntu 24.04" || "$OS" == "ubuntu 24.10" ]]; then
+    sudo apt update
+    sudo apt install -y python3-venv python3-pip
+    sudo python3 -m venv /opt/gdown-venv
+    sudo /opt/gdown-venv/bin/pip install gdown
+    sudo ln -sf /opt/gdown-venv/bin/gdown /usr/local/bin/gdown
+else
+    pip install gdown
+fi
+
+print_success "Packet Yang Dibutuhkan"
+
 }
 clear
 # Fungsi input domain
@@ -391,7 +400,7 @@ clear
     
     # / / Ambil Xray Core Version Terbaru
 latest_version="$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
-bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version $latest_version
+bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version 24.10.31
  
     # // Ambil Config Server
     wget -O /etc/xray/config.json "${REPO}limit/config.json" >/dev/null 2>&1
